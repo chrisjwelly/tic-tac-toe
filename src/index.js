@@ -55,12 +55,14 @@ class Game extends React.Component {
        }
        const col = (i % 3) + 1;
        const row = Math.floor(i / 3);
-       squares[i] = this.state.xIsNext ? 'X' : 'O';
+       const moveOf = this.state.xIsNext ? 'X' : 'O';
+       squares[i] = moveOf;
        this.setState({
           history: history.concat([{
              squares: squares,
              col: col,
              row: row,
+             moveOf: moveOf,
           }]),
           stepNumber: history.length,
           xIsNext: !this.state.xIsNext,
@@ -82,6 +84,8 @@ class Game extends React.Component {
              // col and row represent the position added
              col: null,
              row: null,
+             // moveOf represents which player made the move
+             moveOf: null,
           }],
           stepNumber: 0,
           xIsNext: true,
@@ -98,7 +102,7 @@ class Game extends React.Component {
       */
       const moves = history.map((step, move) => {
          const desc = move ?
-            `Go to move #${move}: (${step.col}, ${step.row})` :
+            `Go to move #${move}: (${step.col}, ${step.row}) done by ${step.moveOf}` :
             "Go to game start";
          return (
             <li key={move}>
