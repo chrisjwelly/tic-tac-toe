@@ -54,7 +54,7 @@ class Game extends React.Component {
           return;
        }
        const col = (i % 3) + 1;
-       const row = Math.floor(i / 3);
+       const row = Math.floor(i / 3) + 1;
        const moveOf = this.state.xIsNext ? 'X' : 'O';
        squares[i] = moveOf;
        this.setState({
