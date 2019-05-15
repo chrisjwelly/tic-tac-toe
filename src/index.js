@@ -53,10 +53,14 @@ class Game extends React.Component {
        if (calculateWinner(squares) || squares[i]) {
           return;
        }
+       const col = (i % 3) + 1;
+       const row = Math.floor(i / 3);
        squares[i] = this.state.xIsNext ? 'X' : 'O';
        this.setState({
           history: history.concat([{
              squares: squares,
+             col: col,
+             row: row,
           }]),
           stepNumber: history.length,
           xIsNext: !this.state.xIsNext,
@@ -75,6 +79,9 @@ class Game extends React.Component {
        this.state = {
           history: [{
              squares: Array(9).fill(null),
+             // col and row represent the position added
+             col: null,
+             row: null,
           }],
           stepNumber: 0,
           xIsNext: true,
@@ -85,10 +92,13 @@ class Game extends React.Component {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
-
+      /* 
+      The parameter move is an optional parameter. 
+      Here it represents the index of the element in the array
+      */
       const moves = history.map((step, move) => {
          const desc = move ?
-            "Go to move #" + move :
+            `Go to move #${move}: (${step.col}, ${step.row})` :
             "Go to game start";
          return (
             <li key={move}>
