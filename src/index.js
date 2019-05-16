@@ -100,10 +100,15 @@ class Game extends React.Component {
        });
        */
        // a cleaner method for larger objects
-       const history = this.state.history.map((obj, idx) => {
+       const thisHist = this.state.history;
+       const len = thisHist.length;
+       const isAscending = this.state.isAscending;
+       const history = thisHist.map((obj, idx) => {
          // the next line creates a deep copy of the previous object
          const newObj = JSON.parse(JSON.stringify(obj));
-         newObj.currentSelection = (idx === step);
+         newObj.currentSelection = isAscending
+                                   ? (idx === step)
+                                   : (idx === (len - step - 1));
          return newObj;
        });
        this.setState({
@@ -128,11 +133,22 @@ class Game extends React.Component {
           }],
           stepNumber: 0,
           xIsNext: true,
+          // default display is ascending
+          isAscending: true,
        };
     }
 
+    toggle() {
+      this.setState({
+        isAscending: !this.state.isAscending,
+      });
+    }
+
     render() {
-      const history = this.state.history;
+      const isAscending = this.state.isAscending;
+      const history = isAscending
+                      ? this.state.history
+                      : this.state.history.slice().reverse();
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
       /* 
@@ -140,7 +156,10 @@ class Game extends React.Component {
       Here it represents the index of the element in the array
       */
       const moves = history.map((step, move) => {
-         const desc = move ?
+         const isMoveOne = isAscending 
+                         ? move != 0
+                         : move != history.length - 1;
+         const desc = isMoveOne ?
             `Go to move #${move}: (${step.col}, ${step.row}) done by ${step.moveOf}` :
             "Go to game start";
          const toReturn = (
@@ -163,6 +182,13 @@ class Game extends React.Component {
          status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
   
+      const toggler = <button
+                        onClick={() => this.toggle()}
+                        >
+                        {this.state.isAscending
+                         ? "Toggle to Descending Order"
+                         : "Toggle to Ascending Order"}
+                      </button>;
       return (
         <div className="game">
           <div className="game-board">
@@ -174,7 +200,10 @@ class Game extends React.Component {
           </div>
           <div className="game-info">
             <div>{status}</div>
-            <ol>{moves}</ol>
+            <div>{toggler}</div>
+            {isAscending 
+             ? <ol>{moves}</ol> 
+             : <ol reversed>{moves}</ol>}
           </div>
         </div>
       );
