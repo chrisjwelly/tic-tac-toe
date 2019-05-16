@@ -31,6 +31,10 @@ class Board extends React.Component {
         for (let j = start; j < start + 3; j++) {
           const currSquare = this.renderSquare(j);
           // The one with {} fails, but why? 
+          /* Ans: {} are used in jsx element to tell the parser that you want
+          to interpret a section in JS. Using {} outside of jsx will be
+          interpreted as an object
+          */
           // columns.push({currSquare});
           columns.push(currSquare);
         }
@@ -41,6 +45,8 @@ class Board extends React.Component {
       return squares;
     }
 
+    /* using a helper function because apparently render() function
+    hates loops */
     render() {
       return (
         <div>
@@ -48,41 +54,20 @@ class Board extends React.Component {
         </div>
       );
     }
-
-    /*
-    render() {
-      return (
-        <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
-        </div>
-      );
-    }
-    */
 }
   
 class Game extends React.Component {
     handleClick(i) {
-       const history = this.state.history.slice(0,
+       // maybe consider using constants
+       let history = this.state.history.slice(0,
          this.state.stepNumber + 1);
        const current = history[history.length - 1];
        const squares = current.squares.slice();
        if (calculateWinner(squares) || squares[i]) {
           return;
        }
+       // ensures that the past moves are no longer selected
+       history.forEach(obj => obj.currentSelection= false);
        const col = (i % 3) + 1;
        const row = Math.floor(i / 3) + 1;
        const moveOf = this.state.xIsNext ? 'X' : 'O';
@@ -93,6 +78,8 @@ class Game extends React.Component {
              col: col,
              row: row,
              moveOf: moveOf,
+             // the recent move that you did is selected
+             currentSelection: true,
           }]),
           stepNumber: history.length,
           xIsNext: !this.state.xIsNext,
@@ -116,6 +103,8 @@ class Game extends React.Component {
              row: null,
              // moveOf represents which player made the move
              moveOf: null,
+             // when game starts, it is emboldened
+             currentSelection: true,
           }],
           stepNumber: 0,
           xIsNext: true,
@@ -134,15 +123,17 @@ class Game extends React.Component {
          const desc = move ?
             `Go to move #${move}: (${step.col}, ${step.row}) done by ${step.moveOf}` :
             "Go to game start";
-         return (
+         const toReturn = (
             <li key={move}>
                <button
                   onClick={() => this.jumpTo(move)}
                   >
-                  {desc}
+                  {/*Note that the later desc should be without {}*/}
+                  {step.currentSelection ? <b>{desc}</b> : desc}
                </button>
             </li>
          );
+         return toReturn;
       });
 
       let status;
