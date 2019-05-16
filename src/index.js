@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
+   const thisClassName = props.isWinnerSq ? "square winner" : "square";
    return (
-      <button className="square" onClick={props.onClick}>
+      <button className={thisClassName} onClick={props.onClick}>
          {props.value}
       </button>
    );
@@ -16,9 +17,29 @@ class Board extends React.Component {
        return (
          <Square 
             value={this.props.squares[i]}
+            isWinnerSq= {this.checkWinnerSq(i, this.props.winnerLines)}
             onClick={() => this.props.onClick(i)}
          />
        );
+    }
+
+    checkWinnerSq(i, winnerLines) {
+      if (winnerLines[0]) {
+        // if there is a value
+        // j < 3 because winnerLines has 3 values
+        let result = false;
+        for (let j = 0; j < 3; j++) {
+          if (i === winnerLines[j]) {
+            // Current index matches one of the winnerLines!
+            result = true;
+            break;
+          }
+        }
+        return result;
+      } else {
+        // because still an array of nulls
+        return false;
+      }
     }
  
     renderSquaresLoop() {
@@ -63,7 +84,9 @@ class Game extends React.Component {
          this.state.stepNumber + 1);
        const current = history[history.length - 1];
        const squares = current.squares.slice();
-       if (calculateWinner(squares) || squares[i]) {
+       // this is to check if there is already a winner or filled the square
+       // [0] because function returns array of 3 values (null or 'X' or 'O'
+       if (calculateWinnerLines(squares)[0] || squares[i]) {
           return;
        }
        // ensures that the past moves are no longer selected
@@ -141,7 +164,10 @@ class Game extends React.Component {
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
-      const winner = calculateWinner(current.squares);
+      const squares = current.squares;
+      const winnerLines = calculateWinnerLines(squares);
+      // can be 0, 1, or 2; it doesn't matter
+      const winner = squares[winnerLines[0]];
       const isAscending = this.state.isAscending;
       /* 
       The parameter move is an optional parameter. 
@@ -186,6 +212,7 @@ class Game extends React.Component {
           <div className="game-board">
             <Board 
              squares={current.squares}
+             winnerLines={winnerLines}
              onClick={(i) => this.handleClick(i)}
             />
 
@@ -204,7 +231,7 @@ class Game extends React.Component {
 }
   
 
-function calculateWinner(squares) {
+function calculateWinnerLines(squares) {
    const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -218,10 +245,10 @@ function calculateWinner(squares) {
    for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-         return squares[a];
+         return [a, b, c];
       }
    }
-   return null;
+   return [null, null, null];
 }
 // ========================================
   
