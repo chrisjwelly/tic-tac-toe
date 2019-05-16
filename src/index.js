@@ -20,7 +20,36 @@ class Board extends React.Component {
          />
        );
     }
-  
+ 
+    renderSquaresLoop() {
+      let squares = [];
+      // Outer loop for the 3 board-rows
+      for (let i = 0; i < 3; i++) {
+        let columns = [];
+        const start = i * 3;
+        // Inner loop to create the 3 columns
+        for (let j = start; j < start + 3; j++) {
+          const currSquare = this.renderSquare(j);
+          // The one with {} fails, but why? 
+          // columns.push({currSquare});
+          columns.push(currSquare);
+        }
+        squares.push(<div className="board-row">
+                       {columns}
+                     </div>);
+      }
+      return squares;
+    }
+
+    render() {
+      return (
+        <div>
+          {this.renderSquaresLoop()}
+        </div>
+      );
+    }
+
+    /*
     render() {
       return (
         <div>
@@ -42,6 +71,7 @@ class Board extends React.Component {
         </div>
       );
     }
+    */
 }
   
 class Game extends React.Component {
