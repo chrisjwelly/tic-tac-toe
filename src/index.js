@@ -87,7 +87,27 @@ class Game extends React.Component {
     }
 
     jumpTo(step) {
+       // the brute force method:
+       /*
+       const history = this.state.history.map((obj, idx) => {
+         return {
+         squares: obj.squares,
+         col: obj.col,
+         row: obj.row,
+         moveOf: obj.moveOf,
+         currentSelection: idx === step,
+         };
+       });
+       */
+       // a cleaner method for larger objects
+       const history = this.state.history.map((obj, idx) => {
+         // the next line creates a deep copy of the previous object
+         const newObj = JSON.parse(JSON.stringify(obj));
+         newObj.currentSelection = (idx === step);
+         return newObj;
+       });
        this.setState({
+          history: history,
           stepNumber: step,
           xIsNext: (step % 2) === 0,
        });
