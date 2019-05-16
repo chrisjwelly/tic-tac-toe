@@ -193,8 +193,11 @@ class Game extends React.Component {
       const movesReversed = moves.slice().reverse();
 
       let status;
+      const isFullyFilled = history.length === 10; // max 10 moves
       if (winner) {
          status = 'Winner: ' + winner;
+      } else if (isFullyFilled) {
+         status = "It's a Draw!";
       } else {
          status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
