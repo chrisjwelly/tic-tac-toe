@@ -128,13 +128,21 @@ class Game extends React.Component {
           }],
           stepNumber: 0,
           xIsNext: true,
+          isAscending: true,
        };
+    }
+
+    toggle() {
+      this.setState({
+        isAscending: !this.state.isAscending,
+      });
     }
 
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
+      const isAscending = this.state.isAscending;
       /* 
       The parameter move is an optional parameter. 
       Here it represents the index of the element in the array
@@ -155,6 +163,8 @@ class Game extends React.Component {
          );
          return toReturn;
       });
+      // Make a new array of moves, but reversed. slice() is important
+      const movesReversed = moves.slice().reverse();
 
       let status;
       if (winner) {
@@ -163,6 +173,14 @@ class Game extends React.Component {
          status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
       }
   
+      const toggler = <button
+                        onClick = {() => this.toggle()}
+                        >
+                        {isAscending
+                         ? "Toggle to descending order"
+                         : "Toggle to ascending order"
+                        }
+                      </button>;
       return (
         <div className="game">
           <div className="game-board">
@@ -174,7 +192,11 @@ class Game extends React.Component {
           </div>
           <div className="game-info">
             <div>{status}</div>
-            <ol>{moves}</ol>
+            <div>{toggler}</div>
+            {isAscending
+             ? <ol>{moves}</ol>
+             : <ol reversed>{movesReversed}</ol>
+            }
           </div>
         </div>
       );
