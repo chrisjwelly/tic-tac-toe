@@ -86,7 +86,7 @@ class Game extends React.Component {
        const squares = current.squares.slice();
        // this is to check if there is already a winner or filled the square
        // [0] because function returns array of 3 values (null or 'X' or 'O'
-       if (calculateWinnerLines(squares)[0] || squares[i]) {
+       if (calculateWinnerLines(squares)[0] !== null || squares[i]) {
           return;
        }
        // ensures that the past moves are no longer selected
