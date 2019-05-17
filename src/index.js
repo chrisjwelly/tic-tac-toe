@@ -24,7 +24,7 @@ class Board extends React.Component {
     }
 
     checkWinnerSq(i, winnerLines) {
-      if (winnerLines[0]) {
+      if (winnerLines[0] !== null) {
         // if there is a value
         // j < 3 because winnerLines has 3 values
         let result = false;
