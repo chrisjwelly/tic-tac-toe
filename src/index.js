@@ -10,7 +10,7 @@ function Square(props) {
       </button>
    );
 }
-  
+
 class Board extends React.Component {
     renderSquare(i) {
        // Note: <Square /> is syntactic sugar for instantiating
@@ -161,6 +161,17 @@ class Game extends React.Component {
       });
     }
 
+    checkForFullSquares(squares) {
+      let flag = true;
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null) {
+          flag = false;
+          break;
+        }
+      }
+      return flag;
+    }
+
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
@@ -193,7 +204,9 @@ class Game extends React.Component {
       const movesReversed = moves.slice().reverse();
 
       let status;
-      const isFullyFilled = history.length === 10; // max 10 moves
+      /* seems a little inefficient though.. but I guess with small boards
+      we can still afford that*/
+      const isFullyFilled = this.checkForFullSquares(squares);
       if (winner) {
          status = 'Winner: ' + winner;
       } else if (isFullyFilled) {
